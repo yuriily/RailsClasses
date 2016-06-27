@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.json.simple.JSONArray;
@@ -21,6 +22,9 @@ public class FetchData {
 	public static final String APIKEY = "BtiEB.ufbdTcx.yGGVb/-sXfC1RvxnCwcaeecZQby"; 
 	public static final int PROJECT_ID = 31;
 	public static final int FULL_TEST_SUITE_ID = 301;
+	public static final int CONFIG_ID = 124;
+	
+
 
 	public static void main(String[] args) throws MalformedURLException, IOException, APIException {
 		// TODO Auto-generated method stub
@@ -33,21 +37,32 @@ public class FetchData {
 		client.setPassword("Artalaire543");
 		
 		Gson gson = new Gson();
-		
+
+		System.out.println("Getting projects...");
 		JSONArray jsonProjects = (JSONArray) client.sendGet("get_projects");
 		Project projects[] = gson.fromJson(jsonProjects.toJSONString(), Project[].class);
 		
-		for (int iter=0;iter<projects.length;iter++)
-			if(projects[iter].getName().equals("Native"))
-			  System.out.println("Native project id is: " + projects[iter].getId());
-		
+		System.out.println("Getting suites...");
 		JSONArray jsonSuites = (JSONArray) client.sendGet("get_suites/"+PROJECT_ID);
 		Suite suites[] = gson.fromJson(jsonSuites.toJSONString(), Suite[].class);
 		
+		System.out.println("Getting cases...");
 		JSONArray jsonCases = (JSONArray) client.sendGet("get_cases/"+PROJECT_ID+ "/&suite_id=" + FULL_TEST_SUITE_ID);
 		Case cases[] = gson.fromJson(jsonCases.toJSONString(), Case[].class);
-		for(int iter=0;iter<cases.length;iter++)
-			System.out.println(cases[iter].getId() + ":" + cases[iter].getTitle());
+		
+		System.out.println("Getting configurations...");
+		JSONArray jsonConfigs = (JSONArray) client.sendGet("get_configs/"+PROJECT_ID);
+		Configuration configs[] = gson.fromJson(jsonConfigs.toJSONString(), Configuration[].class);
+		ArrayList<ConfigurationItem> configItems=null;
+		for(int iter=0;iter<configs.length;iter++) {
+			System.out.println(configs[iter].getId()+":"+configs[iter].getName());
+			if(CONFIG_ID == configs[iter].getId())
+				configItems= new ArrayList<ConfigurationItem>(Arrays.asList(configs[iter].getConfigurationItems()));
+		}
+		
+		System.out.println("Configuration items:");
+		for(int iter=0;iter<configItems.size();iter++)
+			System.out.println(configItems.get(iter).getId()+":"+configItems.get(iter).getName());
 		
 		
 

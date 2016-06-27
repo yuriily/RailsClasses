@@ -1,21 +1,21 @@
 
 public class Configuration {
-	private ConfigurationItem configurationItems[];
+	private ConfigurationItem configs[];
 	private int id;
 	private String name;
 	private int projectId;
 	public Configuration(ConfigurationItem[] configurationItems, int id, String name, int projectId) {
 		super();
-		this.configurationItems = configurationItems;
+		this.configs = configurationItems;
 		this.id = id;
 		this.name = name;
 		this.projectId = projectId;
 	}
 	public ConfigurationItem[] getConfigurationItems() {
-		return configurationItems;
+		return configs;
 	}
 	public void setConfigurationItems(ConfigurationItem[] configurationItems) {
-		this.configurationItems = configurationItems;
+		this.configs = configurationItems;
 	}
 	public int getId() {
 		return id;
