@@ -20,6 +20,7 @@ import org.json.simple.JSONObject;
 public class FetchData {
 	public static final String APIKEY = "BtiEB.ufbdTcx.yGGVb/-sXfC1RvxnCwcaeecZQby"; 
 	public static final int PROJECT_ID = 31;
+	public static final int FULL_TEST_SUITE_ID = 301;
 
 	public static void main(String[] args) throws MalformedURLException, IOException, APIException {
 		// TODO Auto-generated method stub
@@ -42,9 +43,12 @@ public class FetchData {
 		
 		JSONArray jsonSuites = (JSONArray) client.sendGet("get_suites/"+PROJECT_ID);
 		Suite suites[] = gson.fromJson(jsonSuites.toJSONString(), Suite[].class);
-		System.out.println("Suites:\n");
-		for (int iter=0;iter<suites.length;iter++)
-			System.out.println(suites[iter].getId() + ":" + suites[iter].getName());
+		
+		JSONArray jsonCases = (JSONArray) client.sendGet("get_cases/"+PROJECT_ID+ "/&suite_id=" + FULL_TEST_SUITE_ID);
+		Case cases[] = gson.fromJson(jsonCases.toJSONString(), Case[].class);
+		for(int iter=0;iter<cases.length;iter++)
+			System.out.println(cases[iter].getId() + ":" + cases[iter].getTitle());
+		
 		
 
 	}
