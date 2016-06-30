@@ -83,6 +83,7 @@ public class FetchData {
 		
 		try {
 			values.writeToCSV(fileNameForCSV);
+			values.readFromCSV(fileNameForCSV);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
