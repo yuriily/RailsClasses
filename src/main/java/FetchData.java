@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.gurock.testrail.APIClient;
 import com.gurock.testrail.APIException;
 
@@ -16,9 +17,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.junit.experimental.theories.Theories;
 
 public class FetchData {
 	public static final String APIKEY = "BtiEB.ufbdTcx.yGGVb/-sXfC1RvxnCwcaeecZQby";
@@ -27,7 +30,11 @@ public class FetchData {
 	public static final int CONFIG_ID = 124;
 	public static final String fileNameForCSV = "C:\\Trash\\~tmp\\rails.csv";
 	
-	public ConfigurationItem configItems[]; 
+	public static SelectedRailsInstances railsInstances;
+	
+	//TODO do we need it now?
+	public ConfigurationItem configItems[];
+	
 	
 	private LinkedHashSet<String> dataRows;
 	private LinkedHashSet<String> dataCols;
@@ -47,15 +54,24 @@ public class FetchData {
 		System.out.println("Getting projects...");
 		JSONArray jsonProjects = (JSONArray) client.sendGet("get_projects");
 		Project projects[] = gson.fromJson(jsonProjects.toJSONString(), Project[].class);
+		Project currentProject = null;
+		for(int iter = 0; iter<projects.length; iter++)
+			if(PROJECT_ID==projects[iter].getId())
+				currentProject = projects[iter];
+		
+		railsInstances = new SelectedRailsInstances(currentProject);
 
 		System.out.println("Getting suites...");
 		JSONArray jsonSuites = (JSONArray) client.sendGet("get_suites/" + PROJECT_ID);
 		Suite suites[] = gson.fromJson(jsonSuites.toJSONString(), Suite[].class);
+		JSONObject jsonSuite = (JSONObject) client.sendGet("get_suite/"+FULL_TEST_SUITE_ID);
+		railsInstances.setSuite((Suite)gson.fromJson(jsonSuite.toJSONString(), Suite.class));
 
 		System.out.println("Getting cases...");
 		JSONArray jsonCases = (JSONArray) client
 				.sendGet("get_cases/" + PROJECT_ID + "/&suite_id=" + FULL_TEST_SUITE_ID);
 		Case cases[] = gson.fromJson(jsonCases.toJSONString(), Case[].class);
+		
 		LinkedHashSet<String> dataRows = new LinkedHashSet<String>();
 		//loop here to check for nulls
 		for(int iter=0; iter<cases.length; iter++) {
@@ -71,6 +87,7 @@ public class FetchData {
 		System.out.println("Configuration items fill-in...");
 		for (int iter = 0; iter < configs.length; iter++) {
 			if (CONFIG_ID == configs[iter].getId()) {
+				railsInstances.setConfiguration(configs[iter]);
 				ConfigurationItem configItems[] = Arrays.copyOf(configs[iter].getConfigurationItems(), 
 						configs[iter].getConfigurationItems().length);
 				for (int configIter = 0; configIter < configItems.length; configIter++)
@@ -78,16 +95,46 @@ public class FetchData {
 			}
 		}
 		ValuesMatrix values = new ValuesMatrix(dataRows, dataCols);
-		System.out.println("Our table:");
-		System.out.println(values.toPrettyString());
 		
 		try {
-			values.writeToCSV(fileNameForCSV);
+//			values.writeToCSV(fileNameForCSV);
 			values.readFromCSV(fileNameForCSV);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private String populateTestPlan() {
+		//fills in current test plan with data stores in values matrix
+		StringBuilder results = new StringBuilder();
+		Boolean isFailed = false;
+		
+		//check if everything is set up: 
+		//current plan, suite, configuration, and file with data
+		if(null == railsInstances.getValuesMatrix() || railsInstances.getValuesMatrix().isEmpty()) {
+			results.append("ERROR: there is no data in the file or the file is absent.\n");
+			isFailed=true;
+		}
+		if(null==railsInstances.getPlan()) {
+			results.append("Test plan is not selected.\n");
+			isFailed=true;
+		}
+		if(null==railsInstances.getSuite()) {
+			results.append("Test suite is not selected.\n");
+			isFailed=true;
+		}
+		if(null==railsInstances.getConfiguration()) {
+			results.append("Test configuration is not selected.\n");
+			isFailed=true;
+		}
+		
+		if(isFailed)
+			return results.toString();
+		
+		//TODO main part
+		return results.toString();
+		
 	}
 	
 	

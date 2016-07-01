@@ -5,7 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,25 +26,28 @@ import javafx.util.Pair;
 public class ValuesMatrix {
 	private static final String FIRST_COLUMN_NAME = "Test name";
 
-	private LinkedHashSet<String> dataRows;
-	private LinkedHashSet<String> dataCols;
-	private Map<String, Map<String, ?>> isIncluded;
+	private HashSet<String> dataRows;
+	private HashSet<String> dataCols;
+	private LinkedHashMap<String, Map<String, ?>> isIncluded;
 
-	public ValuesMatrix(LinkedHashSet<String> dataRows, LinkedHashSet<String> dataCols) {
+	public ValuesMatrix(HashSet<String> dataRows, HashSet<String> dataCols) {
 		super();
 		this.dataRows = dataRows;
-		this.dataCols = new LinkedHashSet<String>();
-		this.dataCols.add(FIRST_COLUMN_NAME);
-		this.dataCols.addAll(dataCols);
+		this.dataCols = dataCols;
+		LinkedHashSet<String> header = new LinkedHashSet<String>();
+		header.add(FIRST_COLUMN_NAME);
+		header.addAll(dataCols);
 		Iterator<String> iterRows = dataRows.iterator();
 		Iterator<String> iterCols = dataCols.iterator();
-		this.isIncluded = new HashMap<String, Map<String, ?>>();
+		this.isIncluded = new LinkedHashMap<String, Map<String, ?>>();
 
 		// fill in with false, as this constructor is for creating a template
 		// all the cells of the matrix will be empty
 		while (iterRows.hasNext()) {
 			String currentRow = (String) iterRows.next();
 			HashMap<String, String> currentRowValues = new HashMap<String, String>();
+			//add a test name
+			//currentRowValues.put(FIRST_COLUMN_NAME, currentRow);
 			iterCols = dataCols.iterator();
 			while (iterCols.hasNext())
 				currentRowValues.put(iterCols.next(), new String(""));
@@ -50,26 +55,6 @@ public class ValuesMatrix {
 
 		}
 
-	}
-
-	public ValuesMatrix() {
-		// TODO maybe delete it as empty object is not usable
-	}
-
-	public LinkedHashSet<String> getDataRows() {
-		return dataRows;
-	}
-
-	public void setDataRows(LinkedHashSet<String> dataRows) {
-		this.dataRows = dataRows;
-	}
-
-	public LinkedHashSet<String> getDataCols() {
-		return dataCols;
-	}
-
-	public void setDataCols(LinkedHashSet<String> dataCols) {
-		this.dataCols = dataCols;
 	}
 
 	public String toPrettyString() {
@@ -103,20 +88,21 @@ public class ValuesMatrix {
 
 		ICsvMapWriter mapWriter = null;
 
-		// create header for the table
-		final String[] header = new String[getDataCols().size()];
-		getDataCols().toArray(header);
+		// create header for the table, first item is for first column name
+		final String[] header = new String[getDataCols().size()+1];
+		header[0] = FIRST_COLUMN_NAME;
+		Iterator<String> iterCols = dataCols.iterator();
+		int iter=1;
+		while(iterCols.hasNext()) {
+			header[iter] = iterCols.next();
+			iter++;
+		}
 
 		// create cell processor now, when we know the number of columns
-		// first column is always string, other ones for now are always boolean
-		// not needed to identify now
+		// it is not needed to identify its items
 		final CellProcessor[] processors = new CellProcessor[header.length];
-		// processors[0] = new NotNull();
-		// for(int iter=1; iter<header.length; iter++)
-		// processors[iter] = new NotNull(new ParseBool());
 
 		try {
-			// try to create a file now
 			mapWriter = new CsvMapWriter(new FileWriter(fileName), CsvPreference.STANDARD_PREFERENCE);
 			// write the file map-by-map
 			mapWriter.writeHeader(header);
@@ -134,33 +120,75 @@ public class ValuesMatrix {
 	}
 
 	public ValuesMatrix readFromCSV(String filePath) throws IOException {
+		//reads the stuff from csv
+		
 		ICsvMapReader mapReader = null;
 
-		// TODO check if file exists
-		// TODO check if it's a valid csv file
 		try {
 			mapReader = new CsvMapReader(new FileReader(filePath), CsvPreference.STANDARD_PREFERENCE);
 			// read the header to know the number of cell processors
 			// and set our columns set
+			// also the header has a right sequence of configurations, while mapReader.read order is random
 			final String[] header = mapReader.getHeader(true);
+			if(null==header) {
+				//file exists, but is is empty
+				throw new IOException("file " + filePath + " is empty");
+			}
+				
 			this.setDataCols(new LinkedHashSet<String>(Arrays.asList(header)));
+			// add checking for FIRST_COLUMN_NAME in the header - if it doesn't exist, return error
+			if(!this.getDataCols().contains(FIRST_COLUMN_NAME)) {
+				throw new IOException("First column cannot be mapped, column not found: " + FIRST_COLUMN_NAME);
+			} else
+				// TODO do we really need to delete it?
+				this.getDataCols().remove(FIRST_COLUMN_NAME);
+			
 			final CellProcessor[] processors = new CellProcessor[header.length];
 			Map<String, Object> oneRowRecord;
 			System.out.println("\n\nReading the file...");
+			// TODO check if it's a valid csv file
 			
 			while ((oneRowRecord = mapReader.read(header, processors)) != null) {
-				System.out.println(oneRowRecord.toString());
+				String currentRecordId = (String) oneRowRecord.get(FIRST_COLUMN_NAME); 
+				this.dataRows.add(currentRecordId);
+				oneRowRecord.remove(FIRST_COLUMN_NAME);
+				this.isIncluded.put(currentRecordId, oneRowRecord);
 			}
-			
 
 		} finally {
 			if (mapReader != null)
 				mapReader.close();
 		}
-		// TODO read the data
-		// TODO create new instance with this data
 
 		return this;
+	}
+	public ValuesMatrix() {
+		// TODO maybe delete it as empty object is not usable
+	}
+
+	public HashSet<String> getDataRows() {
+		return dataRows;
+	}
+
+	public void setDataRows(HashSet<String> dataRows) {
+		this.dataRows = dataRows;
+	}
+
+	public HashSet<String> getDataCols() {
+		return dataCols;
+	}
+
+	public void setDataCols(HashSet<String> dataCols) {
+		this.dataCols = dataCols;
+	}
+	
+	public boolean isEmpty() {
+		if((null==this.dataCols || this.dataCols.size()<1) || (null==this.dataRows || this.dataRows.size()<1))
+			return true;
+		if(null==this.isIncluded || this.isIncluded.size()<1)
+			return true;
+		return false;
+		
 	}
 
 }
