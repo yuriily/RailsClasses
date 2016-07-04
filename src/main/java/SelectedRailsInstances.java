@@ -5,6 +5,7 @@ public class SelectedRailsInstances {
 	private Plan plan;
 	private Suite suite;
 	private Configuration configuration;
+	private Case[] cases;
 	private ValuesMatrix valuesMatrix;
 	
 	
@@ -41,6 +42,12 @@ public class SelectedRailsInstances {
 	}
 	public void setValuesMatrix(ValuesMatrix valuesMatrix) {
 		this.valuesMatrix = valuesMatrix;
+	}
+	public Case[] getCases() {
+		return cases;
+	}
+	public void setCases(Case[] cases) {
+		this.cases = cases;
 	}
 
 }

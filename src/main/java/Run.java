@@ -1,87 +1,74 @@
+import java.util.ArrayList;
 
 public class Run {
-	private int assignedToId;
-	private int blockedCount;
-	private int[] caseIds;
-	private Long completedOn;
+	private Integer assignedto_id;
+	private Integer blocked_count;
+	private ArrayList<Integer> case_ids;
+	private Long completed_on;
 	private String config;
-	private int[] configIds;
-	private int createdBy;
-	private Long createdOn;
-	private int customStatus1Count;
-	private int customStatus2Count;
-	private int customStatus3Count;
-	private int customStatus4Count;
-	private int customStatus5Count;
-	private int customStatus6Count;
-	private int customStatus7Count;
+	private ArrayList<Integer> config_ids;
+	private Integer created_by;
+	private Long created_on;
+	private Integer custom_status1_count;
+	private Integer custom_status2_count;
+	private Integer custom_status3_count;
+	private Integer custom_status4_count;
+	private Integer custom_status5_count;
+	private Integer custom_status6_count;
+	private Integer custom_status7_count;
 	private String description;
-	private int failedCount;
-	private int id;
-	private boolean includeAll;
-	private boolean isCompleted;
-	private int milestoneId;
-	private int planId;
+	private Integer failed_count;
+	private Integer id;
+	private boolean include_all;
+	private boolean is_completed;
+	private Integer milestone_id;
+	private Integer plan_id;
 	private String name;
-	private int passedCount;
-	private int projectId;
-	private int resetCount;
-	private int suiteId;
-	private int untestedCount;
+	private Integer passed_count;
+	private Integer project_id;
+	private Integer reset_count;
+	private Integer suite_id;
+	private Integer untested_count;
 	private String url;
-	public Run(int assignedTo, int blockedCount, Long completedOn, String config, int[] configIds, int createdBy,
+	
+	public Run(int assignedTo, int blockedCount, Long completedOn, String config, ArrayList<Integer> configIds, int createdBy,
 			Long createdOn, int customStatus1Count, int customStatus2Count, int customStatus3Count,
 			int customStatus4Count, int customStatus5Count, int customStatus6Count, int customStatus7Count,
 			String description, int failedCount, int id, boolean includeAll, boolean isCompleted, int milestoneId,
 			int planId, String name, int passedCount, int projectId, int resetCount, int suiteId, int untestedCount,
 			String url) {
 		super();
-		this.assignedToId = assignedTo;
-		this.blockedCount = blockedCount;
-		this.completedOn = completedOn;
+		this.assignedto_id = assignedTo;
+		this.blocked_count = blockedCount;
+		this.completed_on = completedOn;
 		this.config = config;
-		this.configIds = configIds;
-		this.createdBy = createdBy;
-		this.createdOn = createdOn;
-		this.customStatus1Count = customStatus1Count;
-		this.customStatus2Count = customStatus2Count;
-		this.customStatus3Count = customStatus3Count;
-		this.customStatus4Count = customStatus4Count;
-		this.customStatus5Count = customStatus5Count;
-		this.customStatus6Count = customStatus6Count;
-		this.customStatus7Count = customStatus7Count;
+		this.config_ids = configIds;
+		this.created_by = createdBy;
+		this.created_on = createdOn;
+		this.custom_status1_count = customStatus1Count;
+		this.custom_status2_count = customStatus2Count;
+		this.custom_status3_count = customStatus3Count;
+		this.custom_status4_count = customStatus4Count;
+		this.custom_status5_count = customStatus5Count;
+		this.custom_status6_count = customStatus6Count;
+		this.custom_status7_count = customStatus7Count;
 		this.description = description;
-		this.failedCount = failedCount;
+		this.failed_count = failedCount;
 		this.id = id;
-		this.includeAll = includeAll;
-		this.isCompleted = isCompleted;
-		this.milestoneId = milestoneId;
-		this.planId = planId;
+		this.include_all = includeAll;
+		this.is_completed = isCompleted;
+		this.milestone_id = milestoneId;
+		this.plan_id = planId;
 		this.name = name;
-		this.passedCount = passedCount;
-		this.projectId = projectId;
-		this.resetCount = resetCount;
-		this.suiteId = suiteId;
-		this.untestedCount = untestedCount;
+		this.passed_count = passedCount;
+		this.project_id = projectId;
+		this.reset_count = resetCount;
+		this.suite_id = suiteId;
+		this.untested_count = untestedCount;
 		this.url = url;
 	}
-	public int getAssignedTo() {
-		return assignedToId;
-	}
-	public void setAssignedTo(int assignedTo) {
-		this.assignedToId = assignedTo;
-	}
-	public int getBlockedCount() {
-		return blockedCount;
-	}
-	public void setBlockedCount(int blockedCount) {
-		this.blockedCount = blockedCount;
-	}
-	public Long getCompletedOn() {
-		return completedOn;
-	}
-	public void setCompletedOn(Long completedOn) {
-		this.completedOn = completedOn;
+	public Run() {
+		// TODO Auto-generated constructor stub
 	}
 	public String getConfig() {
 		return config;
@@ -89,65 +76,17 @@ public class Run {
 	public void setConfig(String config) {
 		this.config = config;
 	}
-	public int[] getConfigIds() {
-		return configIds;
+	public ArrayList<Integer> getConfigIds() {
+		return config_ids;
 	}
-	public void setConfigIds(int[] configIds) {
-		this.configIds = configIds;
-	}
-	public int getCreatedBy() {
-		return createdBy;
-	}
-	public void setCreatedBy(int createdBy) {
-		this.createdBy = createdBy;
+	public void setConfigIds(ArrayList<Integer> configIds) {
+		this.config_ids = configIds;
 	}
 	public Long getCreatedOn() {
-		return createdOn;
+		return created_on;
 	}
 	public void setCreatedOn(Long createdOn) {
-		this.createdOn = createdOn;
-	}
-	public int getCustomStatus1Count() {
-		return customStatus1Count;
-	}
-	public void setCustomStatus1Count(int customStatus1Count) {
-		this.customStatus1Count = customStatus1Count;
-	}
-	public int getCustomStatus2Count() {
-		return customStatus2Count;
-	}
-	public void setCustomStatus2Count(int customStatus2Count) {
-		this.customStatus2Count = customStatus2Count;
-	}
-	public int getCustomStatus3Count() {
-		return customStatus3Count;
-	}
-	public void setCustomStatus3Count(int customStatus3Count) {
-		this.customStatus3Count = customStatus3Count;
-	}
-	public int getCustomStatus4Count() {
-		return customStatus4Count;
-	}
-	public void setCustomStatus4Count(int customStatus4Count) {
-		this.customStatus4Count = customStatus4Count;
-	}
-	public int getCustomStatus5Count() {
-		return customStatus5Count;
-	}
-	public void setCustomStatus5Count(int customStatus5Count) {
-		this.customStatus5Count = customStatus5Count;
-	}
-	public int getCustomStatus6Count() {
-		return customStatus6Count;
-	}
-	public void setCustomStatus6Count(int customStatus6Count) {
-		this.customStatus6Count = customStatus6Count;
-	}
-	public int getCustomStatus7Count() {
-		return customStatus7Count;
-	}
-	public void setCustomStatus7Count(int customStatus7Count) {
-		this.customStatus7Count = customStatus7Count;
+		this.created_on = createdOn;
 	}
 	public String getDescription() {
 		return description;
@@ -155,41 +94,17 @@ public class Run {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public int getFailedCount() {
-		return failedCount;
-	}
-	public void setFailedCount(int failedCount) {
-		this.failedCount = failedCount;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
 	public boolean isIncludeAll() {
-		return includeAll;
+		return include_all;
 	}
 	public void setIncludeAll(boolean includeAll) {
-		this.includeAll = includeAll;
+		this.include_all = includeAll;
 	}
 	public boolean isCompleted() {
-		return isCompleted;
+		return is_completed;
 	}
 	public void setCompleted(boolean isCompleted) {
-		this.isCompleted = isCompleted;
-	}
-	public int getMilestoneId() {
-		return milestoneId;
-	}
-	public void setMilestoneId(int milestoneId) {
-		this.milestoneId = milestoneId;
-	}
-	public int getPlanId() {
-		return planId;
-	}
-	public void setPlanId(int planId) {
-		this.planId = planId;
+		this.is_completed = isCompleted;
 	}
 	public String getName() {
 		return name;
@@ -197,47 +112,137 @@ public class Run {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getPassedCount() {
-		return passedCount;
-	}
-	public void setPassedCount(int passedCount) {
-		this.passedCount = passedCount;
-	}
-	public int getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(int projectId) {
-		this.projectId = projectId;
-	}
-	public int getResetCount() {
-		return resetCount;
-	}
-	public void setResetCount(int resetCount) {
-		this.resetCount = resetCount;
-	}
-	public int getSuiteId() {
-		return suiteId;
-	}
-	public void setSuiteId(int suiteId) {
-		this.suiteId = suiteId;
-	}
-	public int getUntestedCount() {
-		return untestedCount;
-	}
-	public void setUntestedCount(int untestedCount) {
-		this.untestedCount = untestedCount;
-	}
 	public String getUrl() {
 		return url;
 	}
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public int[] getCaseIds() {
-		return caseIds;
+	public ArrayList<Integer> getCaseIds() {
+		return case_ids;
 	}
-	public void setCaseIds(int[] caseIds) {
-		this.caseIds = caseIds;
+	public void setCaseIds(ArrayList<Integer> caseIds) {
+		this.case_ids = caseIds;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public Integer getPlanId() {
+		return plan_id;
+	}
+	public void setPlanId(Integer planId) {
+		this.plan_id = planId;
+	}
+	public Integer getProjectId() {
+		return project_id;
+	}
+	public void setProjectId(Integer projectId) {
+		this.project_id = projectId;
+	}
+	public Integer getSuiteId() {
+		return suite_id;
+	}
+	public void setSuiteId(Integer suiteId) {
+		this.suite_id = suiteId;
+	}
+	public void setMilestoneId(Integer milestoneId) {
+		this.milestone_id = milestoneId;
+	}
+	public Integer getAssignedToId() {
+		return assignedto_id;
+	}
+	public void setAssignedToId(Integer assignedToId) {
+		this.assignedto_id = assignedToId;
+	}
+	public Integer getBlockedCount() {
+		return blocked_count;
+	}
+	public void setBlockedCount(Integer blockedCount) {
+		this.blocked_count = blockedCount;
+	}
+	public Long getCompletedOn() {
+		return completed_on;
+	}
+	public void setCompletedOn(Long completedOn) {
+		this.completed_on = completedOn;
+	}
+	public Integer getCreatedBy() {
+		return created_by;
+	}
+	public void setCreatedBy(Integer createdBy) {
+		this.created_by = createdBy;
+	}
+	public Integer getCustomStatus1Count() {
+		return custom_status1_count;
+	}
+	public void setCustomStatus1Count(Integer customStatus1Count) {
+		this.custom_status1_count = customStatus1Count;
+	}
+	public Integer getCustomStatus2Count() {
+		return custom_status2_count;
+	}
+	public void setCustomStatus2Count(Integer customStatus2Count) {
+		this.custom_status2_count = customStatus2Count;
+	}
+	public Integer getCustomStatus3Count() {
+		return custom_status3_count;
+	}
+	public void setCustomStatus3Count(Integer customStatus3Count) {
+		this.custom_status3_count = customStatus3Count;
+	}
+	public Integer getCustomStatus4Count() {
+		return custom_status4_count;
+	}
+	public void setCustomStatus4Count(Integer customStatus4Count) {
+		this.custom_status4_count = customStatus4Count;
+	}
+	public Integer getCustomStatus5Count() {
+		return custom_status5_count;
+	}
+	public void setCustomStatus5Count(Integer customStatus5Count) {
+		this.custom_status5_count = customStatus5Count;
+	}
+	public Integer getCustomStatus6Count() {
+		return custom_status6_count;
+	}
+	public void setCustomStatus6Count(Integer customStatus6Count) {
+		this.custom_status6_count = customStatus6Count;
+	}
+	public Integer getCustomStatus7Count() {
+		return custom_status7_count;
+	}
+	public void setCustomStatus7Count(Integer customStatus7Count) {
+		this.custom_status7_count = customStatus7Count;
+	}
+	public Integer getFailedCount() {
+		return failed_count;
+	}
+	public void setFailedCount(Integer failedCount) {
+		this.failed_count = failedCount;
+	}
+	public Integer getPassedCount() {
+		return passed_count;
+	}
+	public void setPassedCount(Integer passedCount) {
+		this.passed_count = passedCount;
+	}
+	public Integer getResetCount() {
+		return reset_count;
+	}
+	public void setResetCount(Integer resetCount) {
+		this.reset_count = resetCount;
+	}
+	public Integer getUntestedCount() {
+		return untested_count;
+	}
+	public void setUntestedCount(Integer untestedCount) {
+		this.untested_count = untestedCount;
+	}
+	public Integer getMilestoneId() {
+		return milestone_id;
 	}
 	
 	

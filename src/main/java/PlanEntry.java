@@ -1,31 +1,36 @@
+import java.util.ArrayList;
 
 public class PlanEntry {
-	private int suiteId;
+	private int suite_id;
 	private String name;
 	private String description;
-	private int assignedToId;
-	private boolean includeAll;
-	private int[] configIds;
-	private Run[] runs;
+	private Integer assignedto_id;
+	private boolean include_all;
+	private ArrayList<Integer> config_ids;
+	private ArrayList<Run> runs;
 	
 	public PlanEntry(int suiteId, String name, String description, int assignedToId, boolean includeAll,
-			int[] configIds, Run[] runs) {
+			ArrayList<Integer> configIds, ArrayList<Run> runs) {
 		super();
-		this.suiteId = suiteId;
+		this.suite_id = suiteId;
 		this.name = name;
 		this.description = description;
-		this.assignedToId = assignedToId;
-		this.includeAll = includeAll;
-		this.configIds = configIds;
+		this.assignedto_id = assignedToId;
+		this.include_all = includeAll;
+		this.config_ids = configIds;
 		this.runs = runs;
 	}
 
+	public PlanEntry() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public int getSuiteId() {
-		return suiteId;
+		return suite_id;
 	}
 
 	public void setSuiteId(int suiteId) {
-		this.suiteId = suiteId;
+		this.suite_id = suiteId;
 	}
 
 	public String getName() {
@@ -44,35 +49,35 @@ public class PlanEntry {
 		this.description = description;
 	}
 
-	public int getAssignedToId() {
-		return assignedToId;
+	public Integer getAssignedToId() {
+		return assignedto_id;
 	}
 
-	public void setAssignedToId(int assignedToId) {
-		this.assignedToId = assignedToId;
+	public void setAssignedToId(Integer assignedToId) {
+		this.assignedto_id = assignedToId;
 	}
 
 	public boolean isIncludeAll() {
-		return includeAll;
+		return include_all;
 	}
 
 	public void setIncludeAll(boolean includeAll) {
-		this.includeAll = includeAll;
+		this.include_all = includeAll;
 	}
 
-	public int[] getConfigIds() {
-		return configIds;
+	public ArrayList<Integer> getConfigIds() {
+		return config_ids;
 	}
 
-	public void setConfigIds(int[] configIds) {
-		this.configIds = configIds;
+	public void setConfigIds(ArrayList<Integer> configIds) {
+		this.config_ids = configIds;
 	}
 
-	public Run[] getRuns() {
+	public ArrayList<Run> getRuns() {
 		return runs;
 	}
 
-	public void setRuns(Run[] runs) {
+	public void setRuns(ArrayList<Run> runs) {
 		this.runs = runs;
 	}
 	

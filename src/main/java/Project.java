@@ -1,12 +1,12 @@
 
 
 public class Project {
-	private int suiteMode;
-	private Long completedOn;
+	private int suite_mode;
+	private Long completed_on;
 	private String name;
 	private int id;
-	private boolean showAnnouncement;
-	private boolean isCompleted;
+	private boolean show_announcement;
+	private boolean is_completed;
 	private String url;
 	private String announcement;
 	
@@ -16,30 +16,30 @@ public class Project {
 		
 		//TODO: add check for not null for the fields: id, name, url
 		
-		this.suiteMode = suiteMode;
-		this.completedOn = completedOn;
+		this.suite_mode = suiteMode;
+		this.completed_on = completedOn;
 		this.name = name;
 		this.id = id;
-		this.showAnnouncement = showAnnouncement;
-		this.isCompleted = isCompleted;
+		this.show_announcement = showAnnouncement;
+		this.is_completed = isCompleted;
 		this.url = url;
 		this.announcement = announcement;
 	}
 
 	public int getSuiteMode() {
-		return suiteMode;
+		return suite_mode;
 	}
 
 	public void setSuiteMode(int suiteMode) {
-		this.suiteMode = suiteMode;
+		this.suite_mode = suiteMode;
 	}
 
 	public Long getCompletedOn() {
-		return completedOn;
+		return completed_on;
 	}
 
 	public void setCompletedOn(Long completedOn) {
-		this.completedOn = completedOn;
+		this.completed_on = completedOn;
 	}
 
 	public String getName() {
@@ -59,19 +59,19 @@ public class Project {
 	}
 
 	public boolean isShowAnnouncement() {
-		return showAnnouncement;
+		return show_announcement;
 	}
 
 	public void setShowAnnouncement(boolean showAnnouncement) {
-		this.showAnnouncement = showAnnouncement;
+		this.show_announcement = showAnnouncement;
 	}
 
 	public boolean isCompleted() {
-		return isCompleted;
+		return is_completed;
 	}
 
 	public void setCompleted(boolean isCompleted) {
-		this.isCompleted = isCompleted;
+		this.is_completed = isCompleted;
 	}
 
 	public String getUrl() {

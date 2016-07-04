@@ -1,51 +1,51 @@
 
 public class Case {
-	private int createdBy;
-	private Long createdOn;
+	private int created_by;
+	private Long created_on;
 	private String estimate;
-	private String estimateForecast;
+	private String estimate_forecast;
 	private int id;
-	private int milestoneId;
-	private int priorityId;
+	private int milestone_id;
+	private int priority_id;
 	private String refs;
-	private int sectionId;
-	private int suiteId;
-	private int templateId;
+	private int section_id;
+	private int suite_id;
+	private int template_id;
 	private String title;
-	private String typeId;
-	private int updatedBy;
-	private Long updatedOn;
+	private String type_id;
+	private int updated_by;
+	private Long updated_on;
 	public Case(int createdBy, Long createdOn, String estimate, String estimateForecast, int id, int milestoneId,
 			int priorityId, String refs, int sectionId, int suiteId, int templateId, String title, String typeId,
 			int updatedBy, Long updatedOn) {
 		super();
-		this.createdBy = createdBy;
-		this.createdOn = createdOn;
+		this.created_by = createdBy;
+		this.created_on = createdOn;
 		this.estimate = estimate;
-		this.estimateForecast = estimateForecast;
+		this.estimate_forecast = estimateForecast;
 		this.id = id;
-		this.milestoneId = milestoneId;
-		this.priorityId = priorityId;
+		this.milestone_id = milestoneId;
+		this.priority_id = priorityId;
 		this.refs = refs;
-		this.sectionId = sectionId;
-		this.suiteId = suiteId;
-		this.templateId = templateId;
+		this.section_id = sectionId;
+		this.suite_id = suiteId;
+		this.template_id = templateId;
 		this.title = title;
-		this.typeId = typeId;
-		this.updatedBy = updatedBy;
-		this.updatedOn = updatedOn;
+		this.type_id = typeId;
+		this.updated_by = updatedBy;
+		this.updated_on = updatedOn;
 	}
 	public int getCreatedBy() {
-		return createdBy;
+		return created_by;
 	}
 	public void setCreatedBy(int createdBy) {
-		this.createdBy = createdBy;
+		this.created_by = createdBy;
 	}
 	public Long getCreatedOn() {
-		return createdOn;
+		return created_on;
 	}
 	public void setCreatedOn(Long createdOn) {
-		this.createdOn = createdOn;
+		this.created_on = createdOn;
 	}
 	public String getEstimate() {
 		return estimate;
@@ -54,10 +54,10 @@ public class Case {
 		this.estimate = estimate;
 	}
 	public String getEstimateForecast() {
-		return estimateForecast;
+		return estimate_forecast;
 	}
 	public void setEstimateForecast(String estimateForecast) {
-		this.estimateForecast = estimateForecast;
+		this.estimate_forecast = estimateForecast;
 	}
 	public int getId() {
 		return id;
@@ -66,16 +66,16 @@ public class Case {
 		this.id = id;
 	}
 	public int getMilestoneId() {
-		return milestoneId;
+		return milestone_id;
 	}
 	public void setMilestoneId(int milestoneId) {
-		this.milestoneId = milestoneId;
+		this.milestone_id = milestoneId;
 	}
 	public int getPriorityId() {
-		return priorityId;
+		return priority_id;
 	}
 	public void setPriorityId(int priorityId) {
-		this.priorityId = priorityId;
+		this.priority_id = priorityId;
 	}
 	public String getRefs() {
 		return refs;
@@ -84,22 +84,22 @@ public class Case {
 		this.refs = refs;
 	}
 	public int getSectionId() {
-		return sectionId;
+		return section_id;
 	}
 	public void setSectionId(int sectionId) {
-		this.sectionId = sectionId;
+		this.section_id = sectionId;
 	}
 	public int getSuiteId() {
-		return suiteId;
+		return suite_id;
 	}
 	public void setSuiteId(int suiteId) {
-		this.suiteId = suiteId;
+		this.suite_id = suiteId;
 	}
 	public int getTemplateId() {
-		return templateId;
+		return template_id;
 	}
 	public void setTemplateId(int templateId) {
-		this.templateId = templateId;
+		this.template_id = templateId;
 	}
 	public String getTitle() {
 		return title;
@@ -108,22 +108,22 @@ public class Case {
 		this.title = title;
 	}
 	public String getTypeId() {
-		return typeId;
+		return type_id;
 	}
 	public void setTypeId(String typeId) {
-		this.typeId = typeId;
+		this.type_id = typeId;
 	}
 	public int getUpdatedBy() {
-		return updatedBy;
+		return updated_by;
 	}
 	public void setUpdatedBy(int updatedBy) {
-		this.updatedBy = updatedBy;
+		this.updated_by = updatedBy;
 	}
 	public Long getUpdatedOn() {
-		return updatedOn;
+		return updated_on;
 	}
 	public void setUpdatedOn(Long updatedOn) {
-		this.updatedOn = updatedOn;
+		this.updated_on = updatedOn;
 	}
 	
 	

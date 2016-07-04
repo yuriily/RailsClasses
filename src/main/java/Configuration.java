@@ -3,13 +3,13 @@ public class Configuration {
 	private ConfigurationItem configs[];
 	private int id;
 	private String name;
-	private int projectId;
+	private int project_id;
 	public Configuration(ConfigurationItem[] configurationItems, int id, String name, int projectId) {
 		super();
 		this.configs = configurationItems;
 		this.id = id;
 		this.name = name;
-		this.projectId = projectId;
+		this.project_id = projectId;
 	}
 	public ConfigurationItem[] getConfigurationItems() {
 		return configs;
@@ -30,10 +30,10 @@ public class Configuration {
 		this.name = name;
 	}
 	public int getProjectId() {
-		return projectId;
+		return project_id;
 	}
 	public void setProjectId(int projectId) {
-		this.projectId = projectId;
+		this.project_id = projectId;
 	}
 	
 	

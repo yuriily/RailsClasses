@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.gurock.testrail.APIClient;
 import com.gurock.testrail.APIException;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -28,7 +30,9 @@ public class FetchData {
 	public static final int PROJECT_ID = 31;
 	public static final int FULL_TEST_SUITE_ID = 301;
 	public static final int CONFIG_ID = 124;
+	public static final int PLAN_ID = 8510;
 	public static final String fileNameForCSV = "C:\\Trash\\~tmp\\rails.csv";
+	
 	
 	public static SelectedRailsInstances railsInstances;
 	
@@ -71,6 +75,7 @@ public class FetchData {
 		JSONArray jsonCases = (JSONArray) client
 				.sendGet("get_cases/" + PROJECT_ID + "/&suite_id=" + FULL_TEST_SUITE_ID);
 		Case cases[] = gson.fromJson(jsonCases.toJSONString(), Case[].class);
+		railsInstances.setCases(cases);
 		
 		LinkedHashSet<String> dataRows = new LinkedHashSet<String>();
 		//loop here to check for nulls
@@ -102,39 +107,173 @@ public class FetchData {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		railsInstances.setValuesMatrix(values);
+		JSONObject jsonPlan = (JSONObject) client.sendGet("get_plan/"+PLAN_ID);
+		railsInstances.setPlan((Plan)gson.fromJson(jsonPlan.toJSONString(), Plan.class));
+		//String testPlanJson = populateTestPlan();
+		PlanEntry planEntry = createTestPlanEntry();
+		planEntry.setAssignedToId(17);
+		
+		Map<String, Object> data=new HashMap<>();
+		data.put("suite_id", planEntry.getSuiteId());
+		data.put("name", planEntry.getName());
+		data.put("assignedto_id", planEntry.getAssignedToId());
+		data.put("include_all", true);
+		data.put("config_ids", planEntry.getConfigIds());
+		
+		List entryRuns = new ArrayList();
+		for(Run currentRun : planEntry.getRuns()) {
+			Map<String, Object> mapRun=new HashMap<>();
+			mapRun.put("suite_id", currentRun.getSuiteId());
+			mapRun.put("name", currentRun.getName());
+			mapRun.put("is_completed", currentRun.isCompleted());
+			mapRun.put("include_all", currentRun.isIncludeAll());
+			mapRun.put("case_ids", currentRun.getCaseIds());
+			mapRun.put("config_ids", currentRun.getConfigIds());
+			entryRuns.add(mapRun);
+		}
+		
+		data.put("runs", entryRuns);
+		//upload the results to TestRails
+		
+		JSONObject jsonResult = (JSONObject) client.sendPost("add_plan_entry/"+PLAN_ID, data);
+		System.out.println(jsonResult.toJSONString());
+		
+//		JSONObject jsonResult = (JSONObject) client.sendPost("add_plan_entry/"+PLAN_ID, testPlanJson);
+//		System.out.println(jsonResult.toJSONString());
+
 
 	}
 	
-	private String populateTestPlan() {
-		//fills in current test plan with data stores in values matrix
+	private static String populateTestPlan() {
+		//fills in current test plan with data stored in values matrix
+		
+		//TODO add some error handler in case if some object is empty
 		StringBuilder results = new StringBuilder();
 		Boolean isFailed = false;
 		
 		//check if everything is set up: 
 		//current plan, suite, configuration, and file with data
+		//TODO: throw strings into outer configuration
 		if(null == railsInstances.getValuesMatrix() || railsInstances.getValuesMatrix().isEmpty()) {
 			results.append("ERROR: there is no data in the file or the file is absent.\n");
 			isFailed=true;
 		}
 		if(null==railsInstances.getPlan()) {
-			results.append("Test plan is not selected.\n");
+			results.append("ERROR: Test plan is not selected.\n");
 			isFailed=true;
 		}
 		if(null==railsInstances.getSuite()) {
-			results.append("Test suite is not selected.\n");
+			results.append("ERROR: Test suite is not selected.\n");
 			isFailed=true;
 		}
 		if(null==railsInstances.getConfiguration()) {
-			results.append("Test configuration is not selected.\n");
+			results.append("ERROR: Test configuration is not selected.\n");
+			isFailed=true;
+		}
+		if(null==railsInstances.getCases() || railsInstances.getCases().length==0) {
+			results.append("ERROR: No test cases were found or current test suite is empty.\n");
 			isFailed=true;
 		}
 		
 		if(isFailed)
 			return results.toString();
 		
-		//TODO main part
-		return results.toString();
+		// we've got suite that knows test case ids and names
+		// now they should be mapped to test names of the matrix that was read from csv
+		try {
+			railsInstances.getValuesMatrix().setDataCaseIds(railsInstances.getCases());
+		} catch (Exception e) {
+			e.printStackTrace();
+			results.append("ERROR: Error during mapping test instances");
+			return results.toString();
+		}
+		PlanEntry planEntry = createTestPlanEntry();
+		planEntry.setAssignedToId(17);
+		Gson gson = new Gson();
+		String jsonString = gson.toJson(planEntry);
+		System.out.println(jsonString);
 		
+		return jsonString;
+		
+	}
+	
+	private static PlanEntry createTestPlanEntry() {
+		//create entry consisting of test runs
+		PlanEntry planEntry = new PlanEntry();
+		
+		//remove this when done testing, because current method should be called only from
+		//populateTestPlan() which already has this
+		try {
+			railsInstances.getValuesMatrix().setDataCaseIds(railsInstances.getCases());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		planEntry.setSuiteId(FULL_TEST_SUITE_ID);
+		planEntry.setName("Test plan entry");
+		planEntry.setIncludeAll(false);
+		//set config_ids = current config
+		ConfigurationItem[] configItems = railsInstances.getConfiguration().getConfigurationItems();
+		ArrayList<Integer> configIds = new ArrayList<>();
+		for(int iter=0;iter<configItems.length;iter++)
+			configIds.add(configItems[iter].getId());
+		planEntry.setConfigIds(configIds);
+		
+		//add all test runs, number of runs = number of items in selected configuration
+		ArrayList<Run> testRuns = new ArrayList<>();
+		for(int iter=0;iter<configItems.length;iter++) {
+			testRuns.add(createTestRun(null, configItems[iter]));
+		}
+		planEntry.setRuns(testRuns);
+	
+		return planEntry;
+	}
+	
+	private static Run createTestRun(Suite suite, ConfigurationItem configItem) {
+		//creates test run to be inserted further into a test plan entry
+		//for now test plan is created from only one test suite, so there is no need to use suite variable
+		//however test plan can consist of many suites
+		Run currentRun = new Run();
+		currentRun.setIncludeAll(false);
+		currentRun.setSuiteId(FULL_TEST_SUITE_ID);
+		currentRun.setName("Configuration for: \'" + configItem.getName() + "\'");
+		currentRun.setConfig(configItem.getName());
+		List tempList = new ArrayList<Integer>();
+		tempList.add(configItem.getId());
+		currentRun.setConfigIds((ArrayList<Integer>) tempList);
+
+		//TODO: in future, create a local copy of heavyweight object here
+		ValuesMatrix localMatrix = new ValuesMatrix(railsInstances.getValuesMatrix());
+		//LinkedHashMap<String, Integer> dataCaseIds = railsInstances.getValuesMatrix().getDataCaseIds();
+		ArrayList<Integer> caseIds = new ArrayList<>();
+		
+		//set test case ids
+		//loop the whole ValuesMatrix and see if there any data for
+		//current row (test instance name) and current column (configuration name)
+		//if so, add the id of test case, it is already mapped in ValuesMatrix.dataCaseIds
+		for(String currentRow : localMatrix.getDataRows()) {
+			//check if a row is still present in the table of values
+			//TODO: throw an exception here
+			if(!localMatrix.getIsIncluded().containsKey(currentRow)) {
+				System.out.println("ERROR: no such record");
+				return null;
+			}
+			HashMap<String, ?> currentRowValues = (HashMap<String, ?>) localMatrix.getIsIncluded().get(currentRow);
+			String cellValue = (String) currentRowValues.get(configItem.getName());
+			if(cellValue!=null) {
+				//TODO: there can be a plenty of values that should be ignored
+				//better to create a collection of values that should be treated as empty
+				//and check for them here
+				if(!cellValue.equals("null") || !cellValue.equals("")) {
+	  				  caseIds.add(localMatrix.getDataCaseIds().get(currentRow));
+				}
+			}
+		}
+		currentRun.setCaseIds(caseIds);
+		return currentRun;
+	
 	}
 	
 	

@@ -3,12 +3,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -21,6 +23,8 @@ import org.supercsv.io.ICsvMapReader;
 import org.supercsv.io.ICsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
 
+import com.codepine.api.testrail.TestRail.Cases;
+
 import javafx.util.Pair;
 
 public class ValuesMatrix {
@@ -28,8 +32,23 @@ public class ValuesMatrix {
 
 	private HashSet<String> dataRows;
 	private HashSet<String> dataCols;
+	private LinkedHashMap<String, Integer> dataCaseIds;
+	private LinkedHashMap<String, Integer> configurationIds;
 	private LinkedHashMap<String, Map<String, ?>> isIncluded;
 
+	public LinkedHashMap<String, Map<String, ?>> getIsIncluded() {
+		return isIncluded;
+	}
+
+	public ValuesMatrix(ValuesMatrix valuesMatrix) {
+		this.dataRows = valuesMatrix.dataRows;
+		this.dataCols = valuesMatrix.dataCols;
+		this.dataCaseIds = valuesMatrix.dataCaseIds;
+		this.configurationIds = valuesMatrix.configurationIds;
+		this.isIncluded = valuesMatrix.isIncluded;
+
+	}
+	
 	public ValuesMatrix(HashSet<String> dataRows, HashSet<String> dataCols) {
 		super();
 		this.dataRows = dataRows;
@@ -166,6 +185,7 @@ public class ValuesMatrix {
 		// TODO maybe delete it as empty object is not usable
 	}
 
+
 	public HashSet<String> getDataRows() {
 		return dataRows;
 	}
@@ -190,5 +210,53 @@ public class ValuesMatrix {
 		return false;
 		
 	}
+
+	public LinkedHashMap<String, Integer> getDataCaseIds() {
+		return dataCaseIds;
+	}
+
+	public void setDataCaseIds(Case[] testCases) throws Exception {
+		//maps test case id in TestRails to test case name from the file
+		
+		if(null==this.getDataRows() || this.getDataRows().isEmpty())
+			throw new Exception("ERROR: there is no rows with data.");
+		dataCaseIds = new LinkedHashMap<>();
+		StringBuilder notFoundErrors = new StringBuilder();
+		//we will delete from temporary suite to make mapping faster
+		ArrayList<Case> cases = new ArrayList<Case>(Arrays.asList(testCases));
+		
+		//search the test cases by case name and add a pair if case id, name if found
+		//if the item was not found, then the error is in the main flow
+		//because ValuesMatrix doesn't manipulate this data by itself
+		for(String rowRecord : this.getDataRows()) {
+			boolean isFound=false;
+			ListIterator<Case> iterator = cases.listIterator();
+			while(iterator.hasNext()) {
+				Case currentCase = iterator.next();
+				if(currentCase.getTitle().equals(rowRecord)) {
+					dataCaseIds.put(rowRecord, currentCase.getId());
+					iterator.remove();
+					isFound=true;
+					break;
+				}
+				if(!isFound)
+					notFoundErrors.append("Item not found: \'" + currentCase.getTitle() + "\'");
+			}
+
+
+		}
+		this.dataCaseIds = dataCaseIds;
+	}
+
+	public LinkedHashMap<String, Integer> getConfigurationIds() {
+		return configurationIds;
+	}
+	
+	public void setConfigurationIds(LinkedHashMap<String, Integer> configurationIds) {
+		//TODO: maps configuration ids to configuration names from the file; 
+		this.configurationIds = configurationIds;
+	}
+	
+
 
 }

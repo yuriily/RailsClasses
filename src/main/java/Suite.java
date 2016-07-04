@@ -1,30 +1,31 @@
+import com.google.gson.annotations.Expose;
 
 public class Suite {
-	private Long completedOn;
+	private Long completed_on;
 	private String description;
 	private int id;
-	private boolean isBaseline;
-	private boolean isCompleted;
-	private boolean isMaster;
-	private String name;
-	private int projectId;
+	private boolean is_baseline;
+	private boolean is_completed;
+	private boolean is_master;
+	@Expose private String name;
+	@Expose private int project_id;
 	private String url;
 	
 	public Suite(Long completedOn, String description, int id, boolean isBaseline, boolean isCompleted, boolean isMaster,
 			String name, int projectId) {
 		super();
-		this.completedOn = completedOn;
+		this.completed_on = completedOn;
 		this.description = description;
 		this.id = id;
-		this.isBaseline = isBaseline;
-		this.isCompleted = isCompleted;
-		this.isMaster = isMaster;
+		this.is_baseline = isBaseline;
+		this.is_completed = isCompleted;
+		this.is_master = isMaster;
 		this.name = name;
-		this.projectId = projectId;
+		this.project_id = projectId;
 	}
 
 	public Long getCompletedOn() {
-		return completedOn;
+		return completed_on;
 	}
 	public String getDescription() {
 		return description;
@@ -33,19 +34,19 @@ public class Suite {
 		return id;
 	}
 	public boolean isBaseline() {
-		return isBaseline;
+		return is_baseline;
 	}
 	public boolean isCompleted() {
-		return isCompleted;
+		return is_completed;
 	}
 	public boolean isMaster() {
-		return isMaster;
+		return is_master;
 	}
 	public String getName() {
 		return name;
 	}
 	public int getProjectId() {
-		return projectId;
+		return project_id;
 	}
 	public String getUrl() {
 		return url;

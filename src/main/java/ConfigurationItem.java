@@ -1,19 +1,18 @@
-
 public class ConfigurationItem {
-	private int groupId;
+	private int group_id;
 	private int id;
 	private String name;
 	public ConfigurationItem(int groupId, int id, String name) {
 		super();
-		this.groupId = groupId;
+		this.group_id = groupId;
 		this.id = id;
 		this.name = name;
 	}
 	public int getGroupId() {
-		return groupId;
+		return group_id;
 	}
 	public void setGroupId(int groupId) {
-		this.groupId = groupId;
+		this.group_id = groupId;
 	}
 	public int getId() {
 		return id;
