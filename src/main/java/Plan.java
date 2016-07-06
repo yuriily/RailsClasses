@@ -1,11 +1,13 @@
+import java.util.ArrayList;
+
 import com.google.gson.annotations.Expose;
 
 public class Plan {
 	private String name;
 	private String description;
 	private int milestone_id;
-	private PlanEntry[] entries;
-	public Plan(String name, String description, int milestoneId, PlanEntry[] entries) {
+	private ArrayList<PlanEntry> entries;
+	public Plan(String name, String description, int milestoneId, ArrayList<PlanEntry> entries) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -30,10 +32,10 @@ public class Plan {
 	public void setMilestoneId(int milestoneId) {
 		this.milestone_id = milestoneId;
 	}
-	public PlanEntry[] getEntries() {
+	public ArrayList<PlanEntry> getEntries() {
 		return entries;
 	}
-	public void setEntries(PlanEntry[] entries) {
+	public void setEntries(ArrayList<PlanEntry> entries) {
 		this.entries = entries;
 	}
 	

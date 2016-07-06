@@ -220,7 +220,7 @@ public class ValuesMatrix {
 		
 		if(null==this.getDataRows() || this.getDataRows().isEmpty())
 			throw new Exception("ERROR: there is no rows with data.");
-		dataCaseIds = new LinkedHashMap<>();
+		LinkedHashMap<String, Integer> dataCaseIds = new LinkedHashMap<>();
 		StringBuilder notFoundErrors = new StringBuilder();
 		//we will delete from temporary suite to make mapping faster
 		ArrayList<Case> cases = new ArrayList<Case>(Arrays.asList(testCases));
@@ -242,8 +242,6 @@ public class ValuesMatrix {
 				if(!isFound)
 					notFoundErrors.append("Item not found: \'" + currentCase.getTitle() + "\'");
 			}
-
-
 		}
 		this.dataCaseIds = dataCaseIds;
 	}

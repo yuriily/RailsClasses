@@ -23,14 +23,14 @@ import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.junit.experimental.theories.Theories;
+import org.json.simple.JSONValue;
 
 public class FetchData {
 	public static final String APIKEY = "BtiEB.ufbdTcx.yGGVb/-sXfC1RvxnCwcaeecZQby";
-	public static final int PROJECT_ID = 31;
+	public static final int PROJECT_ID = 76; //31
 	public static final int FULL_TEST_SUITE_ID = 301;
 	public static final int CONFIG_ID = 124;
-	public static final int PLAN_ID = 8510;
+	public static final int PLAN_ID = 8874;
 	public static final String fileNameForCSV = "C:\\Trash\\~tmp\\rails.csv";
 	
 	
@@ -51,12 +51,13 @@ public class FetchData {
 		Gson gson = new Gson();
 
 		APIClient client = new APIClient("https://testrail.ee.playtech.corp/testrail/");
-		client.setUser("yuriily");
-		client.setPassword("Artalaire543");
+		client.setUser("");
+		client.setPassword("");
 
 
 		System.out.println("Getting projects...");
 		JSONArray jsonProjects = (JSONArray) client.sendGet("get_projects");
+		System.out.println(jsonProjects.toJSONString());
 		Project projects[] = gson.fromJson(jsonProjects.toJSONString(), Project[].class);
 		Project currentProject = null;
 		for(int iter = 0; iter<projects.length; iter++)
@@ -64,7 +65,15 @@ public class FetchData {
 				currentProject = projects[iter];
 		
 		railsInstances = new SelectedRailsInstances(currentProject);
-
+		
+		System.out.println("Getting configurations...");
+		JSONArray jsonConfigs = (JSONArray) client.sendGet("get_configs/" + PROJECT_ID);
+		Configuration configs[] = gson.fromJson(jsonConfigs.toJSONString(), Configuration[].class);
+		System.out.println(jsonConfigs.toJSONString());
+		
+		
+		System.exit(0);
+		
 		System.out.println("Getting suites...");
 		JSONArray jsonSuites = (JSONArray) client.sendGet("get_suites/" + PROJECT_ID);
 		Suite suites[] = gson.fromJson(jsonSuites.toJSONString(), Suite[].class);
@@ -85,8 +94,8 @@ public class FetchData {
 		}
 
 		System.out.println("Getting configurations...");
-		JSONArray jsonConfigs = (JSONArray) client.sendGet("get_configs/" + PROJECT_ID);
-		Configuration configs[] = gson.fromJson(jsonConfigs.toJSONString(), Configuration[].class);
+//		JSONArray jsonConfigs = (JSONArray) client.sendGet("get_configs/" + PROJECT_ID);
+//		Configuration configs[] = gson.fromJson(jsonConfigs.toJSONString(), Configuration[].class);
 		LinkedHashSet<String> dataCols = new LinkedHashSet<String>();
 
 		System.out.println("Configuration items fill-in...");
@@ -114,6 +123,9 @@ public class FetchData {
 		PlanEntry planEntry = createTestPlanEntry();
 		planEntry.setAssignedToId(17);
 		
+		//return json of planEntry for posting to forum
+		
+		
 		Map<String, Object> data=new HashMap<>();
 		data.put("suite_id", planEntry.getSuiteId());
 		data.put("name", planEntry.getName());
@@ -130,14 +142,15 @@ public class FetchData {
 			mapRun.put("include_all", currentRun.isIncludeAll());
 			mapRun.put("case_ids", currentRun.getCaseIds());
 			mapRun.put("config_ids", currentRun.getConfigIds());
+			mapRun.put("description", currentRun.getDescription());
 			entryRuns.add(mapRun);
 		}
 		
 		data.put("runs", entryRuns);
-		//upload the results to TestRails
 		
-		JSONObject jsonResult = (JSONObject) client.sendPost("add_plan_entry/"+PLAN_ID, data);
-		System.out.println(jsonResult.toJSONString());
+		//upload the results to TestRails
+//		JSONObject jsonResult = (JSONObject) client.sendPost("add_plan_entry/"+PLAN_ID, data);
+//		System.out.println(jsonResult.toJSONString());
 		
 //		JSONObject jsonResult = (JSONObject) client.sendPost("add_plan_entry/"+PLAN_ID, testPlanJson);
 //		System.out.println(jsonResult.toJSONString());
@@ -192,7 +205,6 @@ public class FetchData {
 		planEntry.setAssignedToId(17);
 		Gson gson = new Gson();
 		String jsonString = gson.toJson(planEntry);
-		System.out.println(jsonString);
 		
 		return jsonString;
 		
@@ -212,7 +224,7 @@ public class FetchData {
 		
 		
 		planEntry.setSuiteId(FULL_TEST_SUITE_ID);
-		planEntry.setName("Test plan entry");
+		planEntry.setName("Common tests");
 		planEntry.setIncludeAll(false);
 		//set config_ids = current config
 		ConfigurationItem[] configItems = railsInstances.getConfiguration().getConfigurationItems();
@@ -227,7 +239,6 @@ public class FetchData {
 			testRuns.add(createTestRun(null, configItems[iter]));
 		}
 		planEntry.setRuns(testRuns);
-	
 		return planEntry;
 	}
 	
@@ -239,6 +250,7 @@ public class FetchData {
 		currentRun.setIncludeAll(false);
 		currentRun.setSuiteId(FULL_TEST_SUITE_ID);
 		currentRun.setName("Configuration for: \'" + configItem.getName() + "\'");
+		currentRun.setDescription("Configuration for: \'" + configItem.getName() + "\'");
 		currentRun.setConfig(configItem.getName());
 		List tempList = new ArrayList<Integer>();
 		tempList.add(configItem.getId());
