@@ -1,6 +1,7 @@
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.gurock.testrail.APIClient;
 import com.gurock.testrail.APIException;
 
@@ -15,19 +16,16 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 public class FetchData {
 	public static final String APIKEY = "BtiEB.ufbdTcx.yGGVb/-sXfC1RvxnCwcaeecZQby";
-	public static final int PROJECT_ID = 76; //31
+	public static final int PROJECT_ID = 31;
 	public static final int FULL_TEST_SUITE_ID = 301;
 	public static final int CONFIG_ID = 124;
 	public static final int PLAN_ID = 8874;
@@ -51,13 +49,13 @@ public class FetchData {
 		Gson gson = new Gson();
 
 		APIClient client = new APIClient("https://testrail.ee.playtech.corp/testrail/");
-		client.setUser("");
+		client.setUser("yuriily");
+		//set API key instead of password, doesn't work for now
 		client.setPassword("");
 
 
 		System.out.println("Getting projects...");
 		JSONArray jsonProjects = (JSONArray) client.sendGet("get_projects");
-		System.out.println(jsonProjects.toJSONString());
 		Project projects[] = gson.fromJson(jsonProjects.toJSONString(), Project[].class);
 		Project currentProject = null;
 		for(int iter = 0; iter<projects.length; iter++)
@@ -69,10 +67,7 @@ public class FetchData {
 		System.out.println("Getting configurations...");
 		JSONArray jsonConfigs = (JSONArray) client.sendGet("get_configs/" + PROJECT_ID);
 		Configuration configs[] = gson.fromJson(jsonConfigs.toJSONString(), Configuration[].class);
-		System.out.println(jsonConfigs.toJSONString());
 		
-		
-		System.exit(0);
 		
 		System.out.println("Getting suites...");
 		JSONArray jsonSuites = (JSONArray) client.sendGet("get_suites/" + PROJECT_ID);
@@ -81,8 +76,7 @@ public class FetchData {
 		railsInstances.setSuite((Suite)gson.fromJson(jsonSuite.toJSONString(), Suite.class));
 
 		System.out.println("Getting cases...");
-		JSONArray jsonCases = (JSONArray) client
-				.sendGet("get_cases/" + PROJECT_ID + "/&suite_id=" + FULL_TEST_SUITE_ID);
+		JSONArray jsonCases = (JSONArray) client.sendGet("get_cases/" + PROJECT_ID + "/&suite_id=" + FULL_TEST_SUITE_ID);
 		Case cases[] = gson.fromJson(jsonCases.toJSONString(), Case[].class);
 		railsInstances.setCases(cases);
 		
@@ -122,40 +116,18 @@ public class FetchData {
 		//String testPlanJson = populateTestPlan();
 		PlanEntry planEntry = createTestPlanEntry();
 		planEntry.setAssignedToId(17);
+		planEntry.setIncludeAll(true);
 		
-		//return json of planEntry for posting to forum
-		
-		
-		Map<String, Object> data=new HashMap<>();
-		data.put("suite_id", planEntry.getSuiteId());
-		data.put("name", planEntry.getName());
-		data.put("assignedto_id", planEntry.getAssignedToId());
-		data.put("include_all", true);
-		data.put("config_ids", planEntry.getConfigIds());
-		
-		List entryRuns = new ArrayList();
-		for(Run currentRun : planEntry.getRuns()) {
-			Map<String, Object> mapRun=new HashMap<>();
-			mapRun.put("suite_id", currentRun.getSuiteId());
-			mapRun.put("name", currentRun.getName());
-			mapRun.put("is_completed", currentRun.isCompleted());
-			mapRun.put("include_all", currentRun.isIncludeAll());
-			mapRun.put("case_ids", currentRun.getCaseIds());
-			mapRun.put("config_ids", currentRun.getConfigIds());
-			mapRun.put("description", currentRun.getDescription());
-			entryRuns.add(mapRun);
-		}
-		
-		data.put("runs", entryRuns);
+		//convert everything to maps
+		ObjectMapper mapper = new ObjectMapper()
+				.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
+				.setSerializationInclusion(Include.NON_NULL);
+		Map<String, Object> toPost = mapper.convertValue(planEntry, Map.class);
+		System.out.println(toPost.toString());
 		
 		//upload the results to TestRails
-//		JSONObject jsonResult = (JSONObject) client.sendPost("add_plan_entry/"+PLAN_ID, data);
-//		System.out.println(jsonResult.toJSONString());
-		
-//		JSONObject jsonResult = (JSONObject) client.sendPost("add_plan_entry/"+PLAN_ID, testPlanJson);
-//		System.out.println(jsonResult.toJSONString());
-
-
+		JSONObject jsonResult = (JSONObject) client.sendPost("add_plan_entry/"+PLAN_ID, toPost);
+		System.out.println(jsonResult.toJSONString());
 	}
 	
 	private static String populateTestPlan() {
@@ -236,7 +208,9 @@ public class FetchData {
 		//add all test runs, number of runs = number of items in selected configuration
 		ArrayList<Run> testRuns = new ArrayList<>();
 		for(int iter=0;iter<configItems.length;iter++) {
-			testRuns.add(createTestRun(null, configItems[iter]));
+			Run testRun = createTestRun(null, configItems[iter]);
+			if(testRun!=null)
+				testRuns.add(testRun);
 		}
 		planEntry.setRuns(testRuns);
 		return planEntry;
@@ -282,6 +256,11 @@ public class FetchData {
 	  				  caseIds.add(localMatrix.getDataCaseIds().get(currentRow));
 				}
 			}
+		}
+		//if there are no test cases, such test run cannot be added
+		if(caseIds.isEmpty()) {
+			//TODO add some information that test run was excluded because of 0 test cases
+			return null;
 		}
 		currentRun.setCaseIds(caseIds);
 		return currentRun;
